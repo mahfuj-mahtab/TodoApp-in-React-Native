@@ -10,7 +10,7 @@ import React, { useState } from 'react';
 
 import type {PropsWithChildren} from 'react';
 import { TouchableOpacity } from 'react-native';
-
+import Task from  './component/task';
 import {
   SafeAreaView,
   ScrollView,
@@ -30,10 +30,25 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
+import { KeyboardAvoidingView } from 'react-native';
+import { Platform } from 'react-native';
+import { TextInput } from 'react-native';
 
 function App(): JSX.Element {
  const [checked, setchecked] = useState(false);
+ const [task, settask] = useState("");
+ const [tasklist, settasklist] = useState([]);
+const handletask= ()=> {
 
+  settasklist([...tasklist,task])
+  settask("")
+}
+ const deleteTask = (index: number)=>{
+  let itemscopy = [...tasklist];
+  itemscopy.splice(index,1)
+  settasklist(itemscopy);
+  console.log(itemscopy)
+}
   return (
 
     <SafeAreaView style={styles.container}>
@@ -45,34 +60,56 @@ function App(): JSX.Element {
         
         </View>   
         <View style={styles.bodypart}>
-          <View style={styles.taskgroup}>
-          <View style={styles.tasklist}>
-            <View style={styles.taskleftsection}>
-           
+        {
+        tasklist.map((item,index)=>(
              
-            <BouncyCheckbox
-                  size={25}
-                  fillColor="#1ED3E2"
-                  unfillColor="#1ED3E2"
-                 style={styles.checkbox}
-                  
-                  innerIconStyle={{borderRadius:0 }}
-                  iconStyle={{borderRadius:0 }}
-                  textStyle={{ fontFamily: "JosefinSans-Regular" }}
-                  onPress={(setchecked: boolean) => {}}
-                />            
-            <Text style={styles.tasktext}>Task 1</Text>
-          </View>
-            <View style={styles.taskrightsection}>
-              <TouchableOpacity><Text style={styles.tasktextright}>x</Text></TouchableOpacity>
-            
+            <View key={index} style={styles.taskgroup}>
+            <View style={styles.tasklist}>
+              <View style={styles.taskleftsection}>
+             
+               
+              <BouncyCheckbox
+                    size={25}
+                    fillColor="#1ED3E2"
+                    unfillColor="#1ED3E2"
+                   style={styles.checkbox}
+                    
+                    innerIconStyle={{borderRadius:0 }}
+                    iconStyle={{borderRadius:0 }}
+                    textStyle={{ fontFamily: "JosefinSans-Regular" }}
+                    onPress={(setchecked: boolean) => {}}
+                  />            
+              <Text key={index} style={styles.tasktext}>{item}</Text>
+            </View>
+              <View style={styles.taskrightsection}>
+                <TouchableOpacity onPress={() =>{deleteTask(index)}}><Text style={styles.tasktextright}>x</Text></TouchableOpacity>
+              
+              </View>
             </View>
           </View>
-        </View>
+         
+        ))
+
+        }
+      
+      {/* <Task text="task12 "/> */}
         </View>
     
       </ScrollView>
-      <View style={styles.footerStyle}></View> 
+      <View style={styles.footerStyle}>
+        <View style={styles.writetextwrapper}>
+        <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "padding" : "height"} >
+          <TextInput placeholderTextColor={"#000000"} style={styles.inputfield} placeholder='Enter Task' value={task} onChangeText={text => settask(text)}/>
+        </KeyboardAvoidingView>
+          <TouchableOpacity onPress={handletask}>
+        <View style={styles.submitbuttonwrapper}>
+            <View>
+              <Text  style={styles.submittext}>+</Text>
+            </View>
+        </View>
+          </TouchableOpacity>
+        </View> 
+        </View>
     </SafeAreaView>
 
   );
@@ -113,7 +150,7 @@ checkbox:{
   borderRadius:0,
 },
 taskgroup:{
-  flex:1,
+  // flex:1,
   width: "100%",
   height: 50,
 
@@ -179,7 +216,46 @@ todo_text2:{
    marginLeft:20,
    marginTop:20,
 },
+writetextwrapper:{
+width:"100%",
+flexDirection:'row',
+justifyContent:'space-between',
+alignItems:'center',
+},
 footerStyle:{
+  width:"100%",
+  height:90,
+  // borderWidth:1,
+  justifyContent:'center',
+  alignContent:'center',
+  
+},
+inputfield:{
+  borderWidth:1,
+  width:280,
+  height:50,
+  borderRadius:10,
+  borderColor:"#FFFFFF",
+  // color:"#000000",
+  marginLeft:30,
+  paddingLeft:20,
+  backgroundColor:"#FFFFFF",
+},
+submitbuttonwrapper:{
+  width:50,
+  height:50,
+  // borderWidth:1,
+  justifyContent:'center',
+  alignItems:'center',
+  marginRight:20,
+  borderRadius:50,
+  borderColor:"#FFFFFF",
+  backgroundColor:"#FF6666",
+},
+submittext:{
+  color:"#FFFFFF",
+  fontSize:42,
+  marginTop:-7,
 
 },
 });
